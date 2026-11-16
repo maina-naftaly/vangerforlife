@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ff8fb8">
+<title>Vanger</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="hearts" id="hearts" aria-hidden="true"></div>
+
+<main class="card">
+
+  <!-- Step 1: intro -->
+  <section class="step" id="intro">
+    <div class="big" aria-hidden="true">💌</div>
+    <h1>I Love You Vanger</h1>
+    <p class="sub">Do you wanna play a game?</p>
+    <button id="play" class="btn btn-yes" type="button">Click here 💗</button>
+  </section>
+
+  <!-- Step 2: the question -->
+  <section class="step" id="ask" hidden>
+    <div class="big" aria-hidden="true">🥺</div>
+    <h1>Do you love me back?</h1>
+    <p class="sub" id="sub">Choose carefully…</p>
+    <div class="row">
+      <button id="yes" class="btn btn-yes" type="button">Yes 💖</button>
+      <span class="slot" id="slot"><button id="no" class="btn btn-no" type="button">No</button></span>
+    </div>
+  </section>
+
+  <!-- Step 3: she said yes -->
+  <section class="step" id="win" hidden>
+    <div class="big" aria-hidden="true">🥰</div>
+    <h1>I knew it, Vanger!</h1>
+    <p class="sub">I love you too, always and forever. 💖</p>
+  </section>
+
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
