@@ -3,18 +3,14 @@
 
   const $ = id => document.getElementById(id);
   const intro = $('intro'), ask = $('ask'), win = $('win');
-  const yes = $('yes'), no = $('no'), slot = $('slot'), sub = $('sub');
+  const yes = $('yes'), no = $('no'), sub = $('sub');
   const heartsBox = $('hearts');
 
   const emojis = ['💖', '💕', '💗', '💘', '❤️', '💞', '🌸'];
   const taunts = [
     'Are you sure? 🥺', 'Think again…', 'Wrong button 😏', 'Nice try!', 'Missed me!',
-    'Pleeease? 🥹', "You can't catch it!", 'Just say yes 💕', 'Really?? 😢', 'Too slow!'
+    'Pleeease? 🥹', 'Just say yes 💕', 'Really?? 😢', 'Still no? 🥲', 'Pretty please? 🌸'
   ];
-
-  let dodges = 0;
-  let scale = 1;
-  let playing = false;
 
   /* ---------- hearts ---------- */
   function burst(n) {
@@ -35,76 +31,41 @@
   $('play').addEventListener('click', () => {
     intro.hidden = true;
     ask.hidden = false;
-    playing = true;
     burst(14);
   });
 
-  /* ---------- the runaway No button ---------- */
-  function freeNo() {
-    if (no.classList.contains('free')) return;
-    const r = no.getBoundingClientRect();
-    slot.style.width = r.width + 'px';   // keep the row from collapsing
-    slot.style.height = r.height + 'px';
-    no.style.left = r.left + 'px';
-    no.style.top = r.top + 'px';
-    no.classList.add('free');
-    void no.offsetWidth;                 // so the first hop animates
-  }
+  /* ---------- the No button: it never disappears ----------
+     Every click it moves 20px, following a loop:
+       right → up → left → down → (back where it started) → repeat
+     Change STEP to make it hop further, or edit PATH to change the route. */
+  const STEP = 20;
+  const PATH = [
+    [ 1,  0],   // right
+    [ 0, -1],   // up
+    [-1,  0],   // left
+    [ 0,  1]    // down (back to the start)
+  ];
+  let clicks = 0;
+  let x = 0, y = 0;
+  let scale = 1;
 
-  const overlaps = (a, b, pad = 14) =>
-    a.left < b.right + pad && a.right > b.left - pad &&
-    a.top < b.bottom + pad && a.bottom > b.top - pad;
+  no.addEventListener('click', e => {
+    e.preventDefault();
+    const [dx, dy] = PATH[clicks % PATH.length];
+    x += dx * STEP;
+    y += dy * STEP;
+    no.style.transform = `translate(${x}px, ${y}px)`;
 
-  function dodge() {
-    if (!playing) return;
-    freeNo();
+    sub.textContent = taunts[clicks % taunts.length];
+    clicks++;
 
-    const w = no.offsetWidth, h = no.offsetHeight, m = 12;
-    const maxX = window.innerWidth - w - m;
-    const maxY = window.innerHeight - h - m;
-    const cur = no.getBoundingClientRect();
-    const avoid = [yes.getBoundingClientRect(), ask.querySelector('h1').getBoundingClientRect()];
-    let best = null;
-
-    for (let i = 0; i < 40; i++) {
-      // mostly short hops sideways / up / down, with the odd long jump
-      const far = i > 25 || Math.random() < 0.25;
-      const span = far ? 600 : 220;
-      const x = Math.max(m, Math.min(maxX, cur.left + (Math.random() * 2 - 1) * span));
-      const y = Math.max(m, Math.min(maxY, cur.top + (Math.random() * 2 - 1) * span * 0.8));
-      const box = { left: x, top: y, right: x + w, bottom: y + h };
-      if (Math.hypot(x - cur.left, y - cur.top) < 90) continue;
-      if (avoid.some(a => overlaps(box, a))) continue;
-      best = { x, y };
-      break;
-    }
-    if (!best) best = { x: Math.random() < 0.5 ? m : maxX, y: Math.random() < 0.5 ? m : maxY };
-
-    no.style.left = best.x + 'px';
-    no.style.top = best.y + 'px';
-
-    dodges++;
-    sub.textContent = taunts[(dodges - 1) % taunts.length];
-    scale = Math.min(1.6, scale + 0.06);
+    // Yes slowly gets bigger (capped so it never covers No)
+    scale = Math.min(1.25, scale + 0.03);
     yes.style.setProperty('--s', scale);
-  }
-
-  // hover, touch and keyboard focus all make it run away
-  no.addEventListener('pointerenter', dodge);
-  no.addEventListener('pointerdown', e => { e.preventDefault(); dodge(); });
-  no.addEventListener('focus', dodge);
-  no.addEventListener('click', e => { e.preventDefault(); dodge(); });
-
-  window.addEventListener('resize', () => {
-    if (!no.classList.contains('free')) return;
-    const r = no.getBoundingClientRect();
-    no.style.left = Math.max(12, Math.min(r.left, window.innerWidth - r.width - 12)) + 'px';
-    no.style.top = Math.max(12, Math.min(r.top, window.innerHeight - r.height - 12)) + 'px';
   });
 
   /* ---------- YES ---------- */
   yes.addEventListener('click', () => {
-    playing = false;
     ask.hidden = true;
     win.hidden = false;
     burst(70);

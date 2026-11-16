@@ -54,7 +54,7 @@ body {
 h1 { margin: 18px 0 10px; font-size: clamp(28px, 7.5vw, 40px); line-height: 1.15; color: var(--pink-700); }
 .sub { min-height: 26px; margin-bottom: 28px; font-size: 17px; color: var(--mute); }
 
-.row { display: flex; align-items: center; justify-content: center; gap: 16px; min-height: 64px; }
+.row { display: flex; align-items: center; justify-content: center; gap: 28px; min-height: 90px; }
 
 .btn {
   font: inherit;
@@ -81,11 +81,7 @@ h1 { margin: 18px 0 10px; font-size: clamp(28px, 7.5vw, 40px); line-height: 1.15
   border: 1px solid var(--line);
   touch-action: manipulation;
 }
-.btn-no.free {
-  position: fixed;
-  z-index: 5;
-  transition: left .28s cubic-bezier(.2, .9, .3, 1.2), top .28s cubic-bezier(.2, .9, .3, 1.2);
-}
+.btn-no { transition: transform .25s cubic-bezier(.2, .9, .3, 1.2); }
 .slot { display: inline-block; }
 
 /* floating hearts */
@@ -95,5 +91,5 @@ h1 { margin: 18px 0 10px; font-size: clamp(28px, 7.5vw, 40px); line-height: 1.15
 
 @media (prefers-reduced-motion: reduce) {
   .big, .step { animation: none; }
-  .btn-no.free { transition: none; }
+  .btn-no { transition: none; }
 }
